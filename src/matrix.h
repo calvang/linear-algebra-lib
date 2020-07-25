@@ -1,9 +1,8 @@
 #include<math.h>
 #include<vector>
 
-using namespace std::vector;
+using std::vector;
 
-// TODO rethink whether to make it a vector of rows or cols
 /*
 A Matrix of width w and height h has w columns and h rows. 
 */
@@ -22,8 +21,8 @@ class Matrix {
 		Matrix(vector<vector<double>> data) : matrix(data), height(data.size()), width(data[0].size()) {}
 		// copy constructor
 		// TODO: implement this with std::copy after iterator is implemented
-		Matrix(const Matrix& m) : height(m.rows()), width(m.cols()) {
-			if (&m == this) return *this;
+		Matrix(Matrix& m) : height(m.rows()), width(m.cols()) {
+			if (&m == this) return;
 			if (height!=m.rows() && width!=m.cols())
 				matrix=vector<vector<double>>(height, vector<double>(width));
 			for (int row=0;row<height;++row) {
@@ -33,7 +32,7 @@ class Matrix {
 			}
 		}
 		// assignment operator
-		Matrix& operator=(const Matrix& m) {
+		Matrix& operator=(Matrix& m) {
 			if (&m == this) return *this;
 			if (height!=m.rows() && width!=m.cols())
 				matrix=vector<vector<double>>(height, vector<double>(width));
@@ -45,7 +44,7 @@ class Matrix {
 			return *this;
 		}
 		// equivalence operator
-		bool operator==(const Matrix& m) {
+		bool operator==(Matrix& m) {
 			if (height!=m.rows() && width!=m.cols())
 				return false;
 			for (int row=0;row<height;++row) {
@@ -55,13 +54,18 @@ class Matrix {
 			}
 			return true;
 		}
+		// index operator
+		vector<double>& operator[](int index) {
+			return matrix[index];
+		}
+
 		
 		int size() { return width * height; }
 		int rows() { return height; }
 		int cols() { return width; }
 
 		// multiply scalar by Matrix
-		Matrix operator*(const double a, const Matrix& b) {
+		friend Matrix operator*(const double a, Matrix& b) {
 			int h=b.rows(), w=b.cols();
 			Matrix tmp(b);
 			for (int row=0;row<h;++row) {
@@ -72,7 +76,7 @@ class Matrix {
 			return tmp;
 		}
 		// multiply Matrix by scalar
-		Matrix operator*(const Matrix& a, const double b) {
+		friend Matrix operator*(Matrix& a, const double b) {
 			int h=a.rows(), w=a.cols();
 			Matrix tmp(a);
 			for (int row=0;row<h;++row) {
@@ -84,7 +88,7 @@ class Matrix {
 		}
 		
 		// compute dot product
-		Matrix operator*(const Matrix& a, const Matrix& b) {
+		friend Matrix operator*(Matrix& a, Matrix& b) {
 			int ah=a.rows(), aw=a.cols(), bh=b.rows(), bw=b.cols();
 			// TODO implement check to see if matrices are valid
 			int tmph=ah, tmpw=bh;
@@ -96,11 +100,11 @@ class Matrix {
 					tmp[row][col]=product;
 				}
 			}
-			return tmp
+			return tmp;
 		}
 
 	private:
-		vector<vector<double> matrix;
+		vector<vector<double>> matrix;
 		int width;
 		int height;
 };

@@ -108,3 +108,7 @@ class Matrix {
 		int width;
 		int height;
 };
+
+Matrix& cross(Matrix& a, Matrix& b) {
+	return 
+}

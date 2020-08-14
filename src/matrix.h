@@ -1,6 +1,9 @@
 #include<math.h>
 #include<vector>
 #include<iostream>
+#include<algorithm>
+#include<random>
+#include<functional>
 
 using std::vector;
 
@@ -67,42 +70,45 @@ class Matrix {
 		size_t cols() { return width; }
 
 		// multiply scalar by Matrix
-		friend Matrix operator*(const double a, Matrix& b) {
+		friend Matrix& operator*(const double a, Matrix& b) {
 			size_t h=b.rows(), w=b.cols();
-			Matrix tmp(b);
+			Matrix* tmp = new Matrix(b);
 			for (size_t row=0;row<h;++row) {
 				for (size_t col=0;col<w;++col) {
-					tmp[row][col] = a*b[row][col];
+					(*tmp)[row][col] = a * b[row][col];
 				}
 			}
-			return tmp;
+			return *tmp;
 		}
 		// multiply Matrix by scalar
-		friend Matrix operator*(Matrix& a, const double b) {
+		friend Matrix& operator*(Matrix& a, const double b) {
 			size_t h=a.rows(), w=a.cols();
-			Matrix tmp(a);
+			Matrix* tmp = new Matrix(a);
 			for (size_t row=0;row<h;++row) {
 				for (size_t col=0;col<w;++col) {
-					tmp[row][col] = b*a[row][col];
+					(*tmp)[row][col] = b*a[row][col];
 				}
 			}
-			return tmp;
+			return *tmp;
 		}
 		
 		// compute dot product
-		friend Matrix operator*(Matrix& a, Matrix& b) {
+		friend Matrix& operator*(Matrix& a, Matrix& b) {
 			size_t ah=a.rows(), aw=a.cols(), bh=b.rows(), bw=b.cols();
 			// TODO implement check to see if matrices are valid
 			size_t tmph=ah, tmpw=bh;
-			Matrix tmp(tmph,tmpw);
+			Matrix* tmp = new Matrix(tmph,tmpw);
 			for (size_t row=0;row<tmph;++row) {
 				for (size_t col=0;col<tmpw;++col) {
 					size_t product=0;
-					for (size_t i=0;i<aw;++i) product+=a[row][i]*b[col][i];
-					tmp[row][col]=product;
+					for (size_t i=0;i<aw;++i) {
+						product+=a[row][i]*b[i][col];
+						//std::cout << " " << a[row][i] << " * " << b[i][col] << " \n";
+					}
+					(*tmp)[row][col]=product;
 				}
 			}
-			return tmp;
+			return *tmp;
 		}
 		
 		// PUBLIC UTILITIES
@@ -110,7 +116,7 @@ class Matrix {
 			return &matrix;
 		}
 		
-		// prsize_t matrix
+		// print matrix
 		void print() {
 			for (size_t row=0;row<height;++row) {
 				std::cout << "[";
@@ -120,7 +126,7 @@ class Matrix {
 				std::cout << " ]\n";
 			}
 		}
-		// prsize_t with header message
+		// print with header message
 		void print(std::string message) {
 			std::cout << message << "\n";
 			for (size_t row=0;row<height;++row) {
@@ -137,6 +143,56 @@ class Matrix {
 		size_t width;
 		size_t height;
 };
+
+// generate pseurandom double
+double randomDouble(int max = 100, bool useInt = false) { 
+	if (useInt)
+		return std::rand() % max;
+	else
+		return ((double)(std::rand() % (max*max))) / (double)max;
+}
+
+// generate pseurandom vector of random length
+vector<double> randomVector(int maxLength = 12, int maxVal = 100, bool useInt = false) {
+	int length = std::rand() % maxLength;
+	while (length == 0) length = std::rand() % maxLength;
+	vector<double> vec(length);
+	std::generate(vec.begin(), vec.end(), [maxVal, useInt]() {return randomDouble(maxVal, useInt);});
+	return vec;
+}
+
+// generate pseurandom vector of set length
+vector<double> randomDefinedVector(int length, int maxVal = 100, bool useInt = false) {
+	vector<double> vec(length);
+	std::generate(vec.begin(), vec.end(), [maxVal, useInt]() {return randomDouble(maxVal, useInt);});
+	return vec;
+}
+
+// generate pseurandom matrix with random dimensions
+Matrix& randomMatrix(int maxRows = 12, int maxCols = 12, int maxVal = 100, bool useInt = false) {
+	int numRows = std::rand() % maxRows;
+	int numCols = std::rand() % maxCols;
+	while (numRows == 0) numRows = std::rand() % maxRows;
+	while (numCols == 0) numCols = std::rand() % maxCols;
+	vector<vector<double>> matVec(numRows);
+	std::generate(matVec.begin(), matVec.end(), 
+		[numCols, maxVal, useInt]() {
+			return randomDefinedVector(numCols, maxVal, useInt);
+		});
+	Matrix* mat = new Matrix(matVec);
+	return *mat;
+}
+
+// generate pseudorandom matrix with set dimensions
+Matrix& randomDefinedMatrix(int rows = 12, int cols = 12, int maxVal = 100, bool useInt = false) {
+	vector<vector<double>> matVec(rows);
+	std::generate(matVec.begin(), matVec.end(), 
+		[cols, maxVal, useInt]() {
+			return randomDefinedVector(cols, maxVal, useInt);
+		});
+	Matrix* mat = new Matrix(matVec);
+	return *mat;
+}
 
 // Matrix& cross(Matrix& a, Matrix& b) {
 // 	return 

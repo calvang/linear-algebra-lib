@@ -7,7 +7,8 @@ void test_copy_constructor();
 void test_assignment();
 void test_comparison();
 void test_indexing();
-void test_dot_prod();
+void test_random_matrix();
+void test_dot_product_simple();
 
 int main(int argc, char** argv) {
     std::cout << "Running test suite...\n";
@@ -16,6 +17,8 @@ int main(int argc, char** argv) {
     test_assignment();
     test_comparison();
     test_indexing();
+    test_random_matrix();
+    test_dot_product_simple();
     return 0;
 }
 
@@ -98,4 +101,29 @@ void test_indexing() {
         }
         std::cout << "\n";
     }
+}
+
+void test_random_matrix() {
+    std::cout << "\n------test_random_matrix------\n";
+    Matrix mat1 = randomDefinedMatrix(4,4);
+    mat1.print("mat1:");
+    Matrix mat2 = randomMatrix();
+    mat2.print("mat2:");
+    Matrix mat3 = randomMatrix(10,10,10,true);
+    mat3.print("mat3:");
+}
+
+void test_dot_product_simple() {
+    std::cout << "\n------test_dot_product_simple------\n";
+    vector<vector<double>> matVec1;
+    for (size_t i = 0; i < 4; ++i) {
+        vector<double> tmp = { 2, 3, 5, 4 };
+        matVec1.push_back(tmp);
+    }
+    Matrix mat1(matVec1);
+    mat1.print("mat1:");
+    Matrix mat2(mat1);
+    mat2.print("mat2:");
+    Matrix mat3 = mat1 * mat2;
+    mat3.print("mat3 = mat1 * mat2:");
 }

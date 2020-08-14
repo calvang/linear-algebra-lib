@@ -1,5 +1,6 @@
 #include<math.h>
 #include<vector>
+#include<iostream>
 
 using std::vector;
 
@@ -23,24 +24,29 @@ class Matrix {
 		// TODO: implement this with std::copy after iterator is implemented
 		Matrix(Matrix& m) : height(m.rows()), width(m.cols()) {
 			if (&m == this) return;
-			if (height!=m.rows() && width!=m.cols())
-				matrix=vector<vector<double>>(height, vector<double>(width));
-			for (int row=0;row<height;++row) {
-				for (int col=0;col<width;++col) {
-					matrix[row][col]=m[row][col];
-				}
-			}
+			// if (height!=m.rows() && width!=m.cols())
+			// 	matrix=vector<vector<double>>(height, vector<double>(width));
+			// for (int row=0;row<height;++row) {
+			// 	for (int col=0;col<width;++col) {
+			// 		matrix[row][col]=m[row][col];
+			// 	}
+			// }
+			matrix = *(m.getData());
 		}
 		// assignment operator
 		Matrix& operator=(Matrix& m) {
+			std::cout << "GETTING DATA\n";
 			if (&m == this) return *this;
-			if (height!=m.rows() && width!=m.cols())
-				matrix=vector<vector<double>>(height, vector<double>(width));
-			for (int row=0;row<height;++row) {
-				for (int col=0;col<width;++col) {
-					matrix[row][col]=m[row][col];
-				}
-			}
+			// if (height!=m.rows() && width!=m.cols())
+			// 	matrix=vector<vector<double>>(height, vector<double>(width));
+			// for (int row=0;row<height;++row) {
+			// 	for (int col=0;col<width;++col) {
+			// 		matrix[row][col]=m[row][col];
+			// 	}
+			// }
+			std::cout << "GETTING DATA\n";
+			matrix = *(m.getData());
+			std::cout << "GETTING DATA\n";
 			return *this;
 		}
 		// equivalence operator
@@ -102,6 +108,21 @@ class Matrix {
 			}
 			return tmp;
 		}
+		
+		// PUBLIC UTILITIES
+		vector<vector<double>>* getData() {
+			return &matrix;
+		}
+
+		void print() {
+			for (int row=0;row<height;++row) {
+				std::cout << "|";
+				for (int col=0;col<width;++col) {
+					std::cout << " " << matrix[row][col];
+				}
+				std::cout << " |\n";
+			}
+		}
 
 	private:
 		vector<vector<double>> matrix;
@@ -109,6 +130,6 @@ class Matrix {
 		int height;
 };
 
-Matrix& cross(Matrix& a, Matrix& b) {
-	return 
-}
+// Matrix& cross(Matrix& a, Matrix& b) {
+// 	return 
+// }

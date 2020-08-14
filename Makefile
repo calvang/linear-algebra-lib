@@ -1,2 +1,2 @@
-testMatrix: /tests/testMatrix.cpp
-	g++ -o /tests/testMatrix -I /source/matrix.h testMatrix.cpp
+testMatrix: tests/testMatrix.cpp
+	g++ -o tests/testMatrix -I /src/matrix.h tests/testMatrix.cpp

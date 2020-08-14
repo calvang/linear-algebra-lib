@@ -1,9 +1,10 @@
-#include<math.h>
-#include<vector>
-#include<iostream>
-#include<algorithm>
-#include<random>
-#include<functional>
+#include <math.h>
+#include <vector>
+#include <iostream>
+#include <algorithm>
+#include <random>
+#include <functional>
+#include "matrix_helpers.h"
 
 using std::vector;
 
@@ -110,10 +111,24 @@ class Matrix {
 					(*tmp)[row][col]=product;
 				}
 			}
+			// TODO implement using Kahan Sum
 			return *tmp;
 		}
+
+		// returns true if is a square matrix
+		bool isSquare() { return height == width; }
+
+		// compute determinant of a matrix if there is one
+		double determinant() {
+			// TODO implement a determinant algorithm
+			if (!isSquare()) {
+				std::cout << "CANNOT CALCULATE DETERMINANT OF NONSQUARE MATRIX.\n";
+				return;
+			}
+
+		}
 		
-		// PUBLIC UTILITIES
+		// access the matrix vector
 		vector<vector<double>>* getData() {
 			return &matrix;
 		}
@@ -134,6 +149,15 @@ class Matrix {
 		vector<vector<double>> matrix;
 		size_t width;
 		size_t height;
+};
+
+class Identity : public Matrix {
+	public:
+		Identity(size_t size) : Matrix(size) {
+			for (size_t i = 0; i < size; ++i) {
+				matrix[i][i] = 1;
+			}
+		}
 };
 
 // print dot product of two matrices in the format: a * b = c

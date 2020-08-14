@@ -31,11 +31,8 @@ class Matrix {
 		}
 		// assignment operator
 		Matrix& operator=(Matrix& m) {
-			std::cout << "GETTING DATA\n";
 			if (&m == this) return *this;
-			std::cout << "GETTING DATA\n";
 			matrix = *(m.getData());
-			std::cout << "GETTING DATA\n";
 			return *this;
 		}
 		// equivalence operator
@@ -96,6 +93,11 @@ class Matrix {
 		friend Matrix& operator*(Matrix& a, Matrix& b) {
 			size_t ah=a.rows(), aw=a.cols(), bh=b.rows(), bw=b.cols();
 			// TODO implement check to see if matrices are valid
+			if (aw != bh) {
+				std::cout << "CANNOT APPLY DOT PRODUCT\n";
+				Matrix* tmp = new Matrix(); 
+				return *tmp;
+			}
 			size_t tmph=ah, tmpw=bh;
 			Matrix* tmp = new Matrix(tmph,tmpw);
 			for (size_t row=0;row<tmph;++row) {
@@ -117,18 +119,8 @@ class Matrix {
 		}
 		
 		// print matrix
-		void print() {
-			for (size_t row=0;row<height;++row) {
-				std::cout << "[";
-				for (size_t col=0;col<width;++col) {
-					std::cout << " " << matrix[row][col];
-				}
-				std::cout << " ]\n";
-			}
-		}
-		// print with header message
-		void print(std::string message) {
-			std::cout << message << "\n";
+		void print(std::string message = "") {
+			if (message != "") std::cout << message << "\n";
 			for (size_t row=0;row<height;++row) {
 				std::cout << "[";
 				for (size_t col=0;col<width;++col) {
@@ -143,6 +135,75 @@ class Matrix {
 		size_t width;
 		size_t height;
 };
+
+// print dot product of two matrices in the format: a * b = c
+void printDotProduct(Matrix &a, Matrix &b, Matrix &c, std::string message = "") {
+	if (message != "") std::cout << message << "\n";
+	size_t height = a.rows();
+	if (b.rows() > height) height = b.rows();
+	if (c.rows() > height) height = c.rows();
+	for (size_t row=0;row<height;++row) {
+		if (row < a.rows()) {
+			std::cout << "[";
+			for (size_t col=0;col<a.cols();++col) {
+				std::cout << " " << a[row][col];
+			}
+			std::cout << " ]";
+		}
+		else {
+			std::cout << "";
+			for (size_t col=0;col<a.cols();++col) {
+				std::cout << "   ";
+			}
+			std::cout << " ";
+		}
+		
+		if (row == (height - 1) / 2) {
+			std::cout << "  *  ";
+		}
+		else {
+			std::cout << "     ";
+		}
+
+		if (row < b.rows()) {
+			std::cout << "[";
+			for (size_t col=0;col<b.cols();++col) {
+				std::cout << " " << a[row][col];
+			}
+			std::cout << " ]";
+		}
+		else {
+			std::cout << "";
+			for (size_t col=0;col<b.cols();++col) {
+				std::cout << "   ";
+			}
+			std::cout << " ";
+		}
+
+		if (row == (height - 1) / 2) {
+			std::cout << "  =  ";
+			if (c.size() == 0) std::cout << "IMPOSSIBLE";
+		}
+		else {
+			std::cout << "     ";
+		}
+
+		if (row < c.rows()) {
+			std::cout << "[";
+			for (size_t col=0;col<c.cols();++col) {
+				std::cout << " " << a[row][col];
+			}
+			std::cout << " ]\n";
+		}
+		else {
+			std::cout << "";
+			for (size_t col=0;col<c.cols();++col) {
+				std::cout << "   ";
+			}
+			std::cout << " \n";
+		}
+	}
+}
 
 // generate pseurandom double
 double randomDouble(int max = 100, bool useInt = false) { 

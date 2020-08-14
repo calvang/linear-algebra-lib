@@ -1,4 +1,5 @@
 #include <cassert>
+#include <iomanip>
 #include "../src/matrix.h"
 
 void printVector();
@@ -8,9 +9,13 @@ void test_assignment();
 void test_comparison();
 void test_indexing();
 void test_random_matrix();
+void test_scalar_product();
 void test_dot_product_simple();
+void test_dot_product_fail();
 
 int main(int argc, char** argv) {
+    std::cout << std::fixed;
+    std::cout << std::setprecision(2);
     std::cout << "Running test suite...\n";
     test_print();
     test_copy_constructor();
@@ -18,7 +23,9 @@ int main(int argc, char** argv) {
     test_comparison();
     test_indexing();
     test_random_matrix();
+    test_scalar_product();
     test_dot_product_simple();
+    test_dot_product_fail();
     return 0;
 }
 
@@ -113,6 +120,21 @@ void test_random_matrix() {
     mat3.print("mat3:");
 }
 
+void test_scalar_product() {
+    std::cout << "\n------test_scalar_product------\n";
+    vector<vector<double>> matVec1;
+    for (size_t i = 0; i < 4; ++i) {
+        vector<double> tmp = { 2, 3, 5, 4 };
+        matVec1.push_back(tmp);
+    }
+    Matrix mat1(matVec1);
+    mat1.print();
+    mat1 = mat1 * 2;
+    mat1.print("multiplied by 2:");
+    mat1 = 3.1 * mat1;
+    mat1.print("multiplied by 3.1:");
+}
+
 void test_dot_product_simple() {
     std::cout << "\n------test_dot_product_simple------\n";
     vector<vector<double>> matVec1;
@@ -121,9 +143,16 @@ void test_dot_product_simple() {
         matVec1.push_back(tmp);
     }
     Matrix mat1(matVec1);
-    mat1.print("mat1:");
     Matrix mat2(mat1);
-    mat2.print("mat2:");
     Matrix mat3 = mat1 * mat2;
-    mat3.print("mat3 = mat1 * mat2:");
+    printDotProduct(mat1, mat2, mat3);
+}
+
+void test_dot_product_fail() {
+    std::cout << "\n------test_dot_product_fail------\n";
+    Matrix mat1 = randomDefinedMatrix(4,3);
+    Matrix mat2 = randomDefinedMatrix(4,5);
+    Matrix mat3 = mat1 * mat2;
+    printDotProduct(mat1, mat2, mat3);
+    mat3.print();
 }

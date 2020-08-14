@@ -46,12 +46,22 @@ class Matrix {
 			}
 			return true;
 		}
+		// inequality operator
+		bool operator!=(Matrix& m) {
+			if (height!=m.rows() && width!=m.cols())
+				return true;
+			for (size_t row=0;row<height;++row) {
+				for (size_t col=0;col<width;++col) {
+					if (matrix[row][col]!=m[row][col]) return true;
+				}
+			}
+			return false;
+		}
 		// index operator
 		vector<double>& operator[](size_t index) {
 			return matrix[index];
 		}
 
-		
 		size_t size() { return width * height; }
 		size_t rows() { return height; }
 		size_t cols() { return width; }

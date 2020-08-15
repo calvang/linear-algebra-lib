@@ -10,8 +10,8 @@ void test_comparison();
 void test_indexing();
 void test_random_matrix();
 void test_scalar_product();
-void test_dot_product_simple();
-void test_dot_product_fail();
+void test_multiplication_simple();
+void test_multiplication_fail();
 
 int main(int argc, char** argv) {
     std::cout << std::fixed;
@@ -24,8 +24,8 @@ int main(int argc, char** argv) {
     test_indexing();
     test_random_matrix();
     test_scalar_product();
-    test_dot_product_simple();
-    test_dot_product_fail();
+    test_multiplication_simple();
+    test_multiplication_fail();
     return 0;
 }
 
@@ -135,8 +135,8 @@ void test_scalar_product() {
     mat1.print("multiplied by 3.1:");
 }
 
-void test_dot_product_simple() {
-    std::cout << "\n------test_dot_product_simple------\n";
+void test_multiplication_simple() {
+    std::cout << "\n------test_multiplication_simple------\n";
     vector<vector<double>> matVec1;
     for (size_t i = 0; i < 4; ++i) {
         vector<double> tmp = { 2, 3, 5, 4 };
@@ -145,14 +145,14 @@ void test_dot_product_simple() {
     Matrix mat1(matVec1);
     Matrix mat2(mat1);
     Matrix mat3 = mat1 * mat2;
-    printDotProduct(mat1, mat2, mat3);
+    printProduct(mat1, mat2, mat3);
 }
 
-void test_dot_product_fail() {
-    std::cout << "\n------test_dot_product_fail------\n";
+void test_multiplication_fail() {
+    std::cout << "\n------test_multiplication_fail------\n";
     Matrix mat1 = randomDefinedMatrix(4,3);
     Matrix mat2 = randomDefinedMatrix(4,5);
     Matrix mat3 = mat1 * mat2;
-    printDotProduct(mat1, mat2, mat3);
+    printProduct(mat1, mat2, mat3);
     mat3.print();
 }

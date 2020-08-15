@@ -1,5 +1,6 @@
 #include <math.h>
 #include <vector>
+#include <deque>
 #include <iostream>
 #include <algorithm>
 #include <random>
@@ -7,12 +8,15 @@
 #include "matrix_helpers.h"
 
 using std::vector;
+using std::deque;
 
 /*
 A Matrix of width w and height h has w columns and h rows. 
 */
 class Matrix {
 	public:
+		/*** CONSTRUCTORS ***/
+
 		Matrix() : height(0), width(0) {}
 		// construct n x n Matrix 
 		Matrix(size_t n) : height(n), width(n) { 
@@ -30,6 +34,9 @@ class Matrix {
 			if (&m == this) return;
 			matrix = *(m.getData());
 		}
+
+		/*** BASIC OPERATORS ****/
+
 		// assignment operator
 		Matrix& operator=(Matrix& m) {
 			if (&m == this) return *this;
@@ -63,9 +70,17 @@ class Matrix {
 			return matrix[index];
 		}
 
+		/*** MEMBER DATA ACCESS ****/
+
 		size_t size() { return width * height; }
 		size_t rows() { return height; }
 		size_t cols() { return width; }
+		// access the matrix vector
+		vector<vector<double>>* getData() {
+			return &matrix;
+		}
+
+		/*** MULTIPLICATION OPERATORS ***/
 
 		// multiply scalar by Matrix
 		friend Matrix& operator*(const double a, Matrix& b) {
@@ -90,12 +105,12 @@ class Matrix {
 			return *tmp;
 		}
 		
-		// compute dot product
+		// compute matrix multiplication
 		friend Matrix& operator*(Matrix& a, Matrix& b) {
 			size_t ah=a.rows(), aw=a.cols(), bh=b.rows(), bw=b.cols();
-			// TODO implement check to see if matrices are valid
+			// TODO implement size check for algorithm
 			if (aw != bh) {
-				std::cout << "CANNOT APPLY DOT PRODUCT\n";
+				std::cout << "CANNOT MATRIX MULTIPLICATION\n";
 				Matrix* tmp = new Matrix(); 
 				return *tmp;
 			}
@@ -123,14 +138,12 @@ class Matrix {
 			// TODO implement a determinant algorithm
 			if (!isSquare()) {
 				std::cout << "CANNOT CALCULATE DETERMINANT OF NONSQUARE MATRIX.\n";
-				return;
+				return false;
 			}
-
-		}
-		
-		// access the matrix vector
-		vector<vector<double>>* getData() {
-			return &matrix;
+			deque<double> matCols(width);
+			double colNum = -1;
+			std::generate(matCols.begin(), matCols.end(), [colNum]() mutable {return ++colNum;});
+			calculateDeterminant(matCols, 0);
 		}
 		
 		// print matrix
@@ -145,10 +158,50 @@ class Matrix {
 			}
 		}
 
-	private:
+	protected:
 		vector<vector<double>> matrix;
 		size_t width;
 		size_t height;
+
+		// TODO: better solution: only pass in vector of columns to exclude and row that we are starting on
+
+		double calculateDeterminant(deque<double> matCols, size_t rowStart) {
+			// handle case of 2x2
+			if ((width - matCols.size()) == 2) {
+				return matrix[rowStart][matCols[0]] * matrix[rowStart + 1][matCols[1]] + 
+					matrix[rowStart][matCols[1]] * matrix[rowStart + 1][matCols[0]];
+			}
+			double det = 0;
+			for (size_t col = 0; col < matCols.size(); ++col) {
+				deque<double> tmpCols = matCols;
+				tmpCols.erase(tmpCols.begin() + col, tmpCols.begin() + col + 1);
+				if (col % 2 == 0)
+					det += matrix[rowStart][matCols[col]] * calculateDeterminant(tmpCols, rowStart + 1);
+				else
+					det -= matrix[rowStart][matCols[col]] * calculateDeterminant(tmpCols, rowStart + 1);
+			}
+			return det;
+			// if (detMatrix.size() == 2) {
+			// 	return detMatrix[0][0] * detMatrix[1][1] + detMatrix[0][1] * detMatrix[1][0];
+			// }
+			// double det = 0;
+			// vector<double> cols = detMatrix[0]
+			// detMatrix.pop_front();
+			// for (size_t col = 0; col < detMatrix.size(); ++col) {
+			// 	// subtract odd cols
+			// 	if (col % 2 == 0) {
+			// 		det += detMatrix[0][col] * calculateDeterminant(
+
+			// 		);
+			// 	}
+			// 	else {
+			// 		det -= detMatrix[0][col] * calculateDeterminant(
+
+			// 		);
+			// 	}
+			// }
+			// return det;
+		}
 };
 
 class Identity : public Matrix {
@@ -160,8 +213,25 @@ class Identity : public Matrix {
 		}
 };
 
+// calculate hadamard product of two matrices
+Matrix& hadamardProduct(Matrix &a, Matrix &b) {
+	size_t ah=a.rows(), aw=a.cols(), bh=b.rows(), bw=b.cols();
+	if (aw != bw || ah != bh) {
+		std::cout << "CANNOT APPLY HADAMARD PRODUCT\n";
+		Matrix* tmp = new Matrix(); 
+		return *tmp;
+	}
+	Matrix* tmp = new Matrix(ah,aw);
+	for (size_t row=0;row<ah;++row) {
+		for (size_t col=0;col<aw;++col) {
+			(*tmp)[row][col] = a[row][col] * b[row][col];
+		}
+	}
+	return *tmp;
+}
+
 // print dot product of two matrices in the format: a * b = c
-void printDotProduct(Matrix &a, Matrix &b, Matrix &c, std::string message = "") {
+void printProduct(Matrix &a, Matrix &b, Matrix &c, std::string message = "") {
 	if (message != "") std::cout << message << "\n";
 	size_t height = a.rows();
 	if (b.rows() > height) height = b.rows();

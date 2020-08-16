@@ -116,13 +116,18 @@ Matrix& operator*(Matrix& a, Matrix& b) {
 // compute determinant of a matrix if there is one
 double Matrix::determinant() {
 	// TODO implement a determinant algorithm
+	if (size() == 0) std::cout << "CANNOT CALCULATE DETERMINANT FOR EMPTY MATRIX\n";
+	else if (size() == 1) return matrix[0][0];
 	if (!isSquare()) {
 		std::cout << "CANNOT CALCULATE DETERMINANT OF NONSQUARE MATRIX.\n";
 		return false;
 	}
 	deque<double> matCols(width);
 	double colNum = -1;
-	std::generate(matCols.begin(), matCols.end(), [colNum]() mutable {return ++colNum;});
+	std::generate(matCols.begin(), matCols.end(), [colNum]() mutable {
+		colNum++;
+		return colNum;
+	});
 	double det = calculateDeterminant(matCols, 0);
 	return det;
 }
@@ -139,13 +144,14 @@ void Matrix::print(std::string message) {
 	}
 }
 
-// TODO: better solution: only pass in vector of columns to exclude and row that we are starting on
+// TODO: better solution: check for easy cases
 
 double Matrix::calculateDeterminant(deque<double> matCols, size_t rowStart) {
 	// handle case of 2x2
-	if ((width - matCols.size()) == 2) {
-		return matrix[rowStart][matCols[0]] * matrix[rowStart + 1][matCols[1]] + 
+	if (matCols.size() == 2) {
+		double det = matrix[rowStart][matCols[0]] * matrix[rowStart + 1][matCols[1]] - 
 			matrix[rowStart][matCols[1]] * matrix[rowStart + 1][matCols[0]];
+		return det;
 	}
 	double det = 0;
 	for (size_t col = 0; col < matCols.size(); ++col) {
@@ -157,26 +163,6 @@ double Matrix::calculateDeterminant(deque<double> matCols, size_t rowStart) {
 			det -= matrix[rowStart][matCols[col]] * calculateDeterminant(tmpCols, rowStart + 1);
 	}
 	return det;
-	// if (detMatrix.size() == 2) {
-	// 	return detMatrix[0][0] * detMatrix[1][1] + detMatrix[0][1] * detMatrix[1][0];
-	// }
-	// double det = 0;
-	// vector<double> cols = detMatrix[0]
-	// detMatrix.pop_front();
-	// for (size_t col = 0; col < detMatrix.size(); ++col) {
-	// 	// subtract odd cols
-	// 	if (col % 2 == 0) {
-	// 		det += detMatrix[0][col] * calculateDeterminant(
-
-	// 		);
-	// 	}
-	// 	else {
-	// 		det -= detMatrix[0][col] * calculateDeterminant(
-
-	// 		);
-	// 	}
-	// }
-	// return det;
 }
 
 /*** IDENTITY MATRIX DERIVED CLASS ***/
@@ -275,7 +261,7 @@ void printProduct(Matrix &a, Matrix &b, Matrix &c, std::string message) {
 }
 
 // generate pseurandom double
-double randomDouble(int max, bool useInt) { 
+double randomDouble(bool useInt, int max) { 
 	if (useInt)
 		return std::rand() % max;
 	else
@@ -283,23 +269,23 @@ double randomDouble(int max, bool useInt) {
 }
 
 // generate pseurandom vector of random length
-vector<double> randomVector(int maxLength, int maxVal, bool useInt) {
+vector<double> randomVector(int maxLength, bool useInt, int maxVal) {
 	int length = std::rand() % maxLength;
 	while (length == 0) length = std::rand() % maxLength;
 	vector<double> vec(length);
-	std::generate(vec.begin(), vec.end(), [maxVal, useInt]() {return randomDouble(maxVal, useInt);});
+	std::generate(vec.begin(), vec.end(), [maxVal, useInt]() {return randomDouble(useInt, maxVal);});
 	return vec;
 }
 
 // generate pseurandom vector of set length
-vector<double> randomDefinedVector(int length, int maxVal, bool useInt) {
+vector<double> randomDefinedVector(int length, bool useInt, int maxVal) {
 	vector<double> vec(length);
-	std::generate(vec.begin(), vec.end(), [maxVal, useInt]() {return randomDouble(maxVal, useInt);});
+	std::generate(vec.begin(), vec.end(), [maxVal, useInt]() {return randomDouble(useInt, maxVal);});
 	return vec;
 }
 
 // generate pseurandom matrix with random dimensions
-Matrix& randomMatrix(int maxRows, int maxCols, int maxVal, bool useInt) {
+Matrix& randomMatrix(bool useInt, int maxVal, int maxRows, int maxCols) {
 	int numRows = std::rand() % maxRows;
 	int numCols = std::rand() % maxCols;
 	while (numRows == 0) numRows = std::rand() % maxRows;
@@ -307,18 +293,18 @@ Matrix& randomMatrix(int maxRows, int maxCols, int maxVal, bool useInt) {
 	vector<vector<double>> matVec(numRows);
 	std::generate(matVec.begin(), matVec.end(), 
 		[numCols, maxVal, useInt]() {
-			return randomDefinedVector(numCols, maxVal, useInt);
+			return randomDefinedVector(numCols, useInt, maxVal);
 		});
 	Matrix* mat = new Matrix(matVec);
 	return *mat;
 }
 
 // generate pseudorandom matrix with set dimensions
-Matrix& randomDefinedMatrix(int rows, int cols, int maxVal, bool useInt) {
+Matrix& randomDefinedMatrix(bool useInt, int maxVal, int rows, int cols) {
 	vector<vector<double>> matVec(rows);
 	std::generate(matVec.begin(), matVec.end(), 
 		[cols, maxVal, useInt]() {
-			return randomDefinedVector(cols, maxVal, useInt);
+			return randomDefinedVector(cols, useInt, maxVal);
 		});
 	Matrix* mat = new Matrix(matVec);
 	return *mat;

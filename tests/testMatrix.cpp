@@ -13,6 +13,10 @@ void test_random_matrix();
 void test_scalar_product();
 void test_multiplication_simple();
 void test_multiplication_fail();
+void test_mulitplication_rigorous(); //TODO
+void test_determinant_simple();
+void test_determinant_fail();
+void test_determinant_rigorous();  //TODO
 
 int main(int argc, char** argv) {
     std::cout << std::fixed;
@@ -27,6 +31,8 @@ int main(int argc, char** argv) {
     test_scalar_product();
     test_multiplication_simple();
     test_multiplication_fail();
+    test_determinant_simple();
+    test_determinant_fail();
     return 0;
 }
 
@@ -113,11 +119,11 @@ void test_indexing() {
 
 void test_random_matrix() {
     std::cout << "\n------test_random_matrix------\n";
-    Matrix mat1 = randomDefinedMatrix(4,4);
+    Matrix mat1 = randomDefinedMatrix(false, 100, 4,4);
     mat1.print("mat1:");
     Matrix mat2 = randomMatrix();
     mat2.print("mat2:");
-    Matrix mat3 = randomMatrix(10,10,10,true);
+    Matrix mat3 = randomMatrix(true, 10,10,10);
     mat3.print("mat3:");
 }
 
@@ -151,9 +157,38 @@ void test_multiplication_simple() {
 
 void test_multiplication_fail() {
     std::cout << "\n------test_multiplication_fail------\n";
-    Matrix mat1 = randomDefinedMatrix(4,3);
-    Matrix mat2 = randomDefinedMatrix(4,5);
+    Matrix mat1 = randomDefinedMatrix(false, 100, 4, 3);
+    Matrix mat2 = randomDefinedMatrix(false, 100, 4, 5);
     Matrix mat3 = mat1 * mat2;
     printProduct(mat1, mat2, mat3);
     mat3.print();
+}
+
+void test_determinant_simple() {
+    std::cout << "\n------test_determinant_simple------\n";
+    Matrix mat1 = randomDefinedMatrix(true, 9, 1, 1);
+    mat1.print("determinant of 1x1 matrix");
+    double det1 = mat1.determinant();
+    std::cout << det1 << "\n";
+
+    Matrix mat2 = randomDefinedMatrix(true, 9, 2, 2);
+    mat2.print("determinant of 2x2 matrix");
+    double det2 = mat2.determinant();
+    std::cout << det2 << "\n";
+
+    Matrix mat3 = randomDefinedMatrix(true, 9, 3, 3);
+    mat3.print("determinant of 3x3 matrix");
+    double det3 = mat3.determinant();
+    std::cout << det3 << "\n";
+
+    Matrix mat4 = randomDefinedMatrix(true, 9, 4, 4);
+    mat4.print("determinant of 3x3 matrix");
+    double det4 = mat4.determinant();
+    std::cout << det4 << "\n";
+}
+
+void test_determinant_fail() {
+    std::cout << "\n------test_determinant_fail------\n";
+    Matrix mat;
+    double det = mat.determinant();
 }

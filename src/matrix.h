@@ -89,17 +89,17 @@ Matrix& hadamardProduct(Matrix &a, Matrix &b);
 void printProduct(Matrix &a, Matrix &b, Matrix &c, std::string message = "");
 
 // generate pseurandom double
-double randomDouble(int max = 100, bool useInt = false);
+double randomDouble(bool useInt = false, int max = 100);
 
 // generate pseurandom vector of random length
-vector<double> randomVector(int maxLength = 12, int maxVal = 100, bool useInt = false);
+vector<double> randomVector(int maxLength = 12, bool useInt = false, int maxVal = 100);
 
 // generate pseurandom vector of set length
-vector<double> randomDefinedVector(int length, int maxVal = 100, bool useInt = false);
+vector<double> randomDefinedVector(int length, bool useInt = false, int maxVal = 100);
 // generate pseurandom matrix with random dimensions
-Matrix& randomMatrix(int maxRows = 12, int maxCols = 12, int maxVal = 100, bool useInt = false);
+Matrix& randomMatrix(bool useInt = false, int maxVal = 100, int maxRows = 12, int maxCols = 12);
 
 // generate pseudorandom matrix with set dimensions
-Matrix& randomDefinedMatrix(int rows = 12, int cols = 12, int maxVal = 100, bool useInt = false);
+Matrix& randomDefinedMatrix(bool useInt = false, int maxVal = 100, int rows = 12, int cols = 12);
 
 #endif

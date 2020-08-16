@@ -1,4 +1,5 @@
 #include <cassert>
+#include <iostream>
 #include <iomanip>
 #include "../src/matrix.h"
 

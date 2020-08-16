@@ -1,3 +1,6 @@
+#ifndef MATRIX_H
+#define MATRIX_H
+
 #include <vector>
 #include <deque>
 
@@ -98,3 +101,5 @@ Matrix& randomMatrix(int maxRows = 12, int maxCols = 12, int maxVal = 100, bool 
 
 // generate pseudorandom matrix with set dimensions
 Matrix& randomDefinedMatrix(int rows = 12, int cols = 12, int maxVal = 100, bool useInt = false);
+
+#endif
